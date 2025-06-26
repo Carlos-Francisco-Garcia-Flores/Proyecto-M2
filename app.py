@@ -10,7 +10,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # Cargar el modelo y el scaler
-model = joblib.load('modelo_random_forest_T6.pkl')
+model = joblib.load('modelo_MLPRegressor_T6.pkl')
 scaler = joblib.load('scaler_t6.pkl')
 app.logger.debug("Model and scaler loaded successfully.")
 
@@ -42,7 +42,7 @@ def predict():
         app.logger.debug(f"Datos escalados:\n{scaled_data}")
 
         # Realizar la predicción
-        prediction = model.predict(scaled_data)
+        prediction = model.predict(data_df)
         app.logger.debug(f"Predicción: {prediction[0]}")
 
         # Devolver la predicción como JSON
