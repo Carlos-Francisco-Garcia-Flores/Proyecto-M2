@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Predicción de Nota de Examen</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccd6dd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background: #007bff;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            background: #e9f7ef;
+            border-left: 5px solid #28a745;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #155724;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Predicción de Nota de Examen</h1>
+        <form id="predictionForm">
+            <div class="form-group">
+                <label for="mental_health_rating">Salud Mental (1-10):</label>
+                <input type="number" id="mental_health_rating" name="mental_health_rating" min="1" max="10" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="social_media_hours">Horas en Redes Sociales:</label>
+                <input type="number" id="social_media_hours" name="social_media_hours" min="0" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="netflix_hours">Horas en Netflix:</label>
+                <input type="number" id="netflix_hours" name="netflix_hours" min="0" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="exercise_frequency">Frecuencia de Ejercicio (veces/semana):</label>
+                <input type="number" id="exercise_frequency" name="exercise_frequency" min="0" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="study_hours_per_day">Horas de Estudio al Día:</label>
+                <input type="number" id="study_hours_per_day" name="study_hours_per_day" min="0" step="0.1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="sleep_hours">Horas de Sueño:</label>
+                <input type="number" id="sleep_hours" name="sleep_hours" min="0" max="24" step="0.1" required>
+            </div>
+
+            <button type="submit">Predecir Nota</button>
+        </form>
+
+        <div id="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+
+            if (result.status === 'success') {
+                resultDiv.innerHTML = `<strong>Nota predicha:</strong> ${result.predicted_score.toFixed(2)}`;
+                resultDiv.style.background = "#e9f7ef";
+                resultDiv.style.borderLeftColor = "#28a745";
+                resultDiv.style.color = "#155724";
+            } else {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${result.error}`;
+                resultDiv.style.background = "#f8d7da";
+                resultDiv.style.borderLeftColor = "#dc3545";
+                resultDiv.style.color = "#721c24";
+            }
+        });
+    </script>
+</body>
+</html>
